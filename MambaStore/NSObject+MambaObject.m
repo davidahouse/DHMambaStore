@@ -184,12 +184,29 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 }
 
 #pragma mark - Search methods
+- (id)MB_loadWithID:(NSString *)objectID
+{
+    // get the default collection name
+    NSString *collection = NSStringFromClass([self class]);
+    
+    FMResultSet *results = [MambaStore selectFromCollection:collection where:[NSString stringWithFormat:@"objID = '%@'",objectID] order:@"" limit:-1];
+    if ( [results next] ) {
+        
+        id resultObject = [self MB_unarchive_withResults:results];
+        [results close];
+        return resultObject;
+    }
+    [results close];
+    return nil;
+}
+
+
 - (NSArray *)MB_findAll {
     
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:@"" order:@"" limit:-1];
+    FMResultSet *results = [MambaStore selectFromCollection:collection where:@"" order:@"orderNumber" limit:-1];
     NSMutableArray *resultArray = [[NSMutableArray alloc] init];
     while ( [results next] ) {
         

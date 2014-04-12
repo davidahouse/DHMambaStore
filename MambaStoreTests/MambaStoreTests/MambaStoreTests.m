@@ -39,6 +39,21 @@
     [super tearDown];
 }
 
+- (void)testSaveAndLoadByID {
+    
+    State *aState = [[State alloc] init];
+    aState.name = @"TestState";
+    aState.abbreviation = @"TestAbbreviation";
+    [aState MB_save];
+    
+    NSString *sID = [aState MB_objID];
+    State *bState = [State MB_loadWithID:sID];
+    XCTAssertNotNil(bState, @"State is nil, why didn't it find it?");
+    XCTAssertTrue([aState.name isEqualToString:bState.name], @"Names don't match");
+    XCTAssertTrue([aState.abbreviation isEqualToString:bState.abbreviation], @"Abbreviations don't match");
+    XCTAssertTrue([[bState MB_objID] isEqualToString:sID], @"ObjectIDs don't match, whats up with that?");
+}
+
 - (void)testFindAll {
 
     NSArray *allStates = [State MB_findAll];

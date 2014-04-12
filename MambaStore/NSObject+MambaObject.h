@@ -55,6 +55,7 @@
 - (void)MB_deleteAll;
 
 #pragma mark - Search methods
+- (id)MB_loadWithID:(NSString *)objectID;
 - (NSArray *)MB_findAll;
 - (id)MB_find:(NSString *)key;
 + (NSArray *)MB_findInTitle:(NSString *)condition;
