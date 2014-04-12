@@ -185,7 +185,12 @@ static NSMutableDictionary *staticCollectionSources;
 }
 
 #pragma mark - Query methods
-+ (FMResultSet *)selectFromCollection:(NSString *)collection where:(NSString *)whereClause order:(NSString *)orderBy limit:(int)limit {
++ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause order:(NSString *)orderBy limit:(int)limit resultBlock:(void (^)(FMResultSet *))resultBlock {
+    
+    if ( !resultBlock ) {
+        NSLog(@"Error: no result block passed in, so pointless to run the query.");
+        return;
+    }
     
     NSString *querySql =[NSString stringWithFormat:@"select * from %@",collection];
     if ( ![whereClause isEqualToString:@""] ) {
@@ -205,8 +210,10 @@ static NSMutableDictionary *staticCollectionSources;
     [staticStore inDatabase:^(FMDatabase *db) {
 
         results = [db executeQuery:querySql];
+        while ( [results next] ) {
+            resultBlock(results);
+        }
     }];
-    return results;
 }
 
 #pragma mark - Private Methods
@@ -226,20 +233,27 @@ static NSMutableDictionary *staticCollectionSources;
         // create a table for this collection
         NSString *createSQL = [NSString stringWithFormat:@"create table if not exists %@ (objID text, objKey text, objForeignKey text, objTitle text, createTime real, updateTime real, orderNumber integer, objBody blob)",collection];
         NSLog(@"createSQL: %@",createSQL);
+        
+        NSString *createPKIndexSQL = [NSString stringWithFormat:@"create index if not exists %@_pk ON %@ (objID)",collection,collection];
+
+        NSString *createKeyIndexSQL = [NSString stringWithFormat:@"create index if not exists %@_pk ON %@ (objKey)",collection,collection];
+
         [staticStore inDatabase:^(FMDatabase *db) {
 
             if ( ![db executeUpdate:createSQL] ) {
                 NSLog(@"error creating table: %@",[db lastErrorMessage]);
             }
 
+            if ( ![db executeUpdate:createPKIndexSQL] ) {
+                NSLog(@"error creating PK index: %@",[db lastErrorMessage]);
+            }
+
+            if ( ![db executeUpdate:createKeyIndexSQL] ) {
+                NSLog(@"error creating Key index: %@",[db lastErrorMessage]);
+            }
         }];
         
         [staticCollectionList addObject:collection];
-        
-        // Also create a dispatch source so we have somewhere to post
-        // any updates to the collection
-        dispatch_source_t source = dispatch_source_create(DISPATCH_SOURCE_TYPE_DATA_ADD, 0, 0, dispatch_get_main_queue());
-        dispatch_resume(source);
     }
 }
 

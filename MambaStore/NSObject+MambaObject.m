@@ -184,53 +184,47 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 }
 
 #pragma mark - Search methods
-- (id)MB_loadWithID:(NSString *)objectID
++ (id)MB_loadWithID:(NSString *)objectID
 {
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:[NSString stringWithFormat:@"objID = '%@'",objectID] order:@"" limit:-1];
-    if ( [results next] ) {
+    __block id resultObject = nil;
+    [MambaStore selectFromCollection:collection where:[NSString stringWithFormat:@"objID = '%@'",objectID] order:@"" limit:-1 resultBlock:^(FMResultSet *results) {
         
-        id resultObject = [self MB_unarchive_withResults:results];
-        [results close];
-        return resultObject;
-    }
-    [results close];
-    return nil;
+        resultObject = [self MB_unarchive_withResults:results];
+    }];
+    [self MB_performAfterLoad:resultObject];
+    return resultObject;
 }
 
-
-- (NSArray *)MB_findAll {
++ (NSArray *)MB_findAll {
     
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:@"" order:@"orderNumber" limit:-1];
-    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    while ( [results next] ) {
+    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    [MambaStore selectFromCollection:collection where:@"" order:@"orderNumber" limit:-1 resultBlock:^(FMResultSet *results) {
         
         id resultObject = [self MB_unarchive_withResults:results];
         [resultArray addObject:resultObject];
-    }
-    [results close];
+    }];
+    [self MB_performAfterLoadOnArray:resultArray];
     return resultArray;
 }
 
-- (id)MB_find:(NSString *)key {
++ (id)MB_find:(NSString *)key {
     
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:[NSString stringWithFormat:@"objKey = '%@'",key] order:@"" limit:-1];
-    if ( [results next] ) {
+    __block id resultObject = nil;
+    [MambaStore selectFromCollection:collection where:[NSString stringWithFormat:@"objKey = '%@'",key] order:@"" limit:-1 resultBlock:^(FMResultSet *results) {
         
-        id resultObject = [self MB_unarchive_withResults:results];
-        [results close];
-        return resultObject;
-    }
-    [results close];
-    return nil;
+        resultObject = [self MB_unarchive_withResults:results];
+    }];
+    [self MB_performAfterLoad:resultObject];
+    return resultObject;
 }
 
 + (NSArray *)MB_findInTitle:(NSString *)condition {
@@ -251,14 +245,13 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:@"" order:@"createTime DESC" limit:top];
-    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    while ( [results next] ) {
+    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    [MambaStore selectFromCollection:collection where:@"" order:@"createTime DESC" limit:top resultBlock:^(FMResultSet *results) {
         
         id resultObject = [self MB_unarchive_withResults:results];
         [resultArray addObject:resultObject];
-    }
-    [results close];
+    }];
+    [self MB_performAfterLoadOnArray:resultArray];
     return resultArray;
 }
 
@@ -267,14 +260,13 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:@"" order:@"createTime" limit:top];
-    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    while ( [results next] ) {
-        
+    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    [MambaStore selectFromCollection:collection where:@"" order:@"createTime" limit:top resultBlock:^(FMResultSet *results) {
+
         id resultObject = [self MB_unarchive_withResults:results];
         [resultArray addObject:resultObject];
-    }
-    [results close];
+    }];
+    [self MB_performAfterLoadOnArray:resultArray];
     return resultArray;
 }
 
@@ -283,14 +275,13 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:@"" order:@"updateTime DESC" limit:top];
-    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    while ( [results next] ) {
+    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    [MambaStore selectFromCollection:collection where:@"" order:@"updateTime DESC" limit:top resultBlock:^(FMResultSet *results) {
         
         id resultObject = [self MB_unarchive_withResults:results];
         [resultArray addObject:resultObject];
-    }
-    [results close];
+    }];
+    [self MB_performAfterLoadOnArray:resultArray];
     return resultArray;
 }
 
@@ -299,14 +290,13 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:@"" order:@"updateTime" limit:top];
-    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    while ( [results next] ) {
+    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    [MambaStore selectFromCollection:collection where:@"" order:@"updateTime" limit:top resultBlock:^(FMResultSet *results) {
         
         id resultObject = [self MB_unarchive_withResults:results];
         [resultArray addObject:resultObject];
-    }
-    [results close];
+    }];
+    [self MB_performAfterLoadOnArray:resultArray];
     return resultArray;
 }
 
@@ -343,13 +333,22 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
         }
         [unarchiver finishDecoding];
     }
-    
-    // Give object a chance to do anything special after load
-    if ( [resultObject respondsToSelector:@selector(mambaAfterLoad)]) {
-        [resultObject performSelector:@selector(mambaAfterLoad)];
-    }
-    
     return resultObject;
+}
+
++ (void)MB_performAfterLoad:(id)loadedObject
+{
+    // Give object a chance to do anything special after load
+    if ( [loadedObject respondsToSelector:@selector(mambaAfterLoad)]) {
+        [loadedObject performSelector:@selector(mambaAfterLoad)];
+    }
+}
+
++ (void)MB_performAfterLoadOnArray:(NSArray *)loadedObjects
+{
+    for ( id loadedObject in loadedObjects ) {
+        [self MB_performAfterLoad:loadedObject];
+    }
 }
 
 //
@@ -419,14 +418,13 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
         where = [where stringByAppendingString:whereCriteria];
     }
     
-    FMResultSet *results = [MambaStore selectFromCollection:collection where:where order:@"orderNumber, objTitle" limit:-1];
-    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    while ( [results next] ) {
-        
+    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    [MambaStore selectFromCollection:collection where:where order:@"orderNumber, objTitle" limit:-1 resultBlock:^(FMResultSet *results) {
+
         id resultObject = [self MB_unarchive_withResults:results];
         [resultArray addObject:resultObject];
-    }
-    [results close];
+    }];
+    [self MB_performAfterLoadOnArray:resultArray];
     return resultArray;
 }
 

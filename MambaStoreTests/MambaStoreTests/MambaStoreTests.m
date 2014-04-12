@@ -287,4 +287,15 @@
     XCTAssertTrue(first.frame.size.height == 40, @"frame HEIGHT was incorrect, was %f instead",first.frame.size.height);
 }
 
+- (void)testInsertSpeed
+{
+    for ( int i =0; i < 10000; i++ ) {
+        ParentObject *newObj = [[ParentObject alloc] init];
+        [newObj MB_save];
+    }
+}
+
+
+
+
 @end
