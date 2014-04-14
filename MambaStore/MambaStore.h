@@ -33,5 +33,6 @@ static NSString *const kMambaStoreNotification = @"MambaStoreNotification";
 
 #pragma mark - Query methods
 + (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause order:(NSString *)orderBy limit:(int)limit resultBlock:(void (^)(FMResultSet *results))resultBlock;
++ (NSNumber *)countFromCollection:(NSString *)collection where:(NSString *)whereClause;
 
 @end

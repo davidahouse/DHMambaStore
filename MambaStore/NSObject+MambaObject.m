@@ -300,6 +300,63 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     return resultArray;
 }
 
+#pragma mark - Count Methods
+
+/**
+ *  <#Description#>
+ *
+ *  @return <#return value description#>
+ */
++ (NSNumber *)MB_countAll
+{
+    return [self MB_count:@[@""]];
+}
+
++ (NSNumber *)MB_countWithKey:(NSString *)key
+{
+    return [self MB_count:@[[NSString stringWithFormat:@"objKey = '%@'",key]]];
+}
+
++ (NSNumber *)MB_countLikeKey:(NSString *)key
+{
+    return [self MB_count:@[[NSString stringWithFormat:@"objKey like '%%%@%%'",key]]];
+}
+
++ (NSNumber *)MB_countWithTitle:(NSString *)title
+{
+    return [self MB_count:@[[NSString stringWithFormat:@"objTitle = '%@'",title]]];
+}
+
++ (NSNumber *)MB_countLikeTitle:(NSString *)title
+{
+    return [self MB_count:@[[NSString stringWithFormat:@"objTitle like '%%%@%%'",title]]];
+}
+
++ (NSNumber *)MB_countWithForeignKey:(NSString *)foreignKey
+{
+    return [self MB_count:@[[NSString stringWithFormat:@"objForeignKey = '%@'",foreignKey]]];
+}
+
++ (NSNumber *)MB_countLikeForeignKey:(NSString *)foreignKey
+{
+    return [self MB_count:@[[NSString stringWithFormat:@"objForeignKey like '%%%@%%'",foreignKey]]];
+}
+
++ (NSNumber *)MB_countOrderedFrom:(NSNumber *)fromOrderNumber to:(NSNumber *)toOrderNumber
+{
+    return [self MB_count:@[[NSString stringWithFormat:@"orderNumber >= %@",fromOrderNumber],[NSString stringWithFormat:@"orderNumber <= %@",toOrderNumber]]];
+}
+
++ (NSNumber *)MB_countCreatedFrom:(NSDate *)fromDate to:(NSDate *)toDate
+{
+    return @0;
+}
+
++ (NSNumber *)MB_countUpdatedFrom:(NSDate *)fromDate to:(NSDate *)toDate
+{
+    return @0;
+}
+
 #pragma mark - Private methods
 
 - (id)MB_unarchive_withResults:(FMResultSet *)results {
@@ -426,6 +483,22 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     }];
     [self MB_performAfterLoadOnArray:resultArray];
     return resultArray;
+}
+
++ (NSNumber *)MB_count:(NSArray *)criteria {
+    
+    NSString *collection = NSStringFromClass([self class]);
+    
+    // setup the where clause
+    NSString *where = @"";
+    for ( NSString *whereCriteria in criteria ) {
+        if ( ![where isEqualToString:@""] ) {
+            where = [where stringByAppendingString:@" and "];
+        }
+        where = [where stringByAppendingString:whereCriteria];
+    }
+    
+    return [MambaStore countFromCollection:collection where:where];
 }
 
 @end

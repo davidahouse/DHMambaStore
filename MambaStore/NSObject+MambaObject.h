@@ -66,4 +66,16 @@
 + (NSArray *)MB_updatedMostRecent:(int)top;
 + (NSArray *)MB_updatedLeastRecent:(int)top;
 
+#pragma mark - Count Methods
++ (NSNumber *)MB_countAll;
++ (NSNumber *)MB_countWithKey:(NSString *)key;
++ (NSNumber *)MB_countLikeKey:(NSString *)key;
++ (NSNumber *)MB_countWithTitle:(NSString *)title;
++ (NSNumber *)MB_countLikeTitle:(NSString *)title;
++ (NSNumber *)MB_countWithForeignKey:(NSString *)foreignKey;
++ (NSNumber *)MB_countLikeForeignKey:(NSString *)foreignKey;
++ (NSNumber *)MB_countOrderedFrom:(NSNumber *)fromOrderNumber to:(NSNumber *)toOrderNumber;
++ (NSNumber *)MB_countCreatedFrom:(NSDate *)fromDate to:(NSDate *)toDate;
++ (NSNumber *)MB_countUpdatedFrom:(NSDate *)fromDate to:(NSDate *)toDate;
+
 @end

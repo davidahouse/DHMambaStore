@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = 'MambaStore'
-  s.version      = '0.1.0'
+  s.version      = '0.1.1'
   s.summary      = 'An object store that uses FMDB to facilitate persisting your objects.'
   s.author       = {
     'David House' => 'davidahouse@gmail.com'

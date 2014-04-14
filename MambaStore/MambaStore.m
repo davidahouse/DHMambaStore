@@ -216,6 +216,25 @@ static NSMutableDictionary *staticCollectionSources;
     }];
 }
 
++ (NSNumber *)countFromCollection:(NSString *)collection where:(NSString *)whereClause
+{
+    NSString *querySql = [NSString stringWithFormat:@"select count(*) form %@",collection];
+    if ( ![whereClause isEqualToString:@""] ) {
+        querySql = [querySql stringByAppendingFormat:@" where %@",whereClause];
+    }
+    
+    NSLog(@"MAMBASTORE## query: %@",querySql);
+    __block NSNumber *count = @0;
+    [staticStore inDatabase:^(FMDatabase *db) {
+        
+        FMResultSet *results = [db executeQuery:querySql];
+        if ( [results next] ) {
+            count = [NSNumber numberWithInt:[results intForColumnIndex:0]];
+        }
+    }];
+    return count;
+}
+
 #pragma mark - Private Methods
 + (void)createCollectionIfDoesntExist:(Class)docClass{
     
