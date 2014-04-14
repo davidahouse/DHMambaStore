@@ -231,6 +231,7 @@ static NSMutableDictionary *staticCollectionSources;
         if ( [results next] ) {
             count = [NSNumber numberWithInt:[results intForColumnIndex:0]];
         }
+        [results close];
     }];
     return count;
 }
