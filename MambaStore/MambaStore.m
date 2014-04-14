@@ -218,7 +218,7 @@ static NSMutableDictionary *staticCollectionSources;
 
 + (NSNumber *)countFromCollection:(NSString *)collection where:(NSString *)whereClause
 {
-    NSString *querySql = [NSString stringWithFormat:@"select count(*) form %@",collection];
+    NSString *querySql = [NSString stringWithFormat:@"select count(*) from %@",collection];
     if ( ![whereClause isEqualToString:@""] ) {
         querySql = [querySql stringByAppendingFormat:@" where %@",whereClause];
     }
