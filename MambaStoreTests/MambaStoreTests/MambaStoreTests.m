@@ -81,7 +81,7 @@
     newState.capital = @"A CAPITAL";
     [newState MB_save];
     
-    State *savedState = [State MB_find:@"NXX"];
+    State *savedState = [State MB_findWithKey:@"NXX"];
     XCTAssertNotNil(savedState, @"state not found");
     XCTAssertTrue([savedState.abbreviation isEqualToString:newState.abbreviation], @"abbreviation are different");
     XCTAssertTrue([savedState.name isEqualToString:newState.name], @"names are different");
@@ -90,7 +90,7 @@
 
 - (void)testFindByKey {
     
-    State *georgia = [State MB_find:@"GA"];
+    State *georgia = [State MB_findWithKey:@"GA"];
     XCTAssertNotNil(georgia, @"Georgia not found");
     XCTAssertNotNil(georgia.abbreviation, @"abbreviation is nil");
     XCTAssertTrue([georgia.name isEqualToString:@"GEORGIA"], @"name is not GEORGIA");
@@ -115,11 +115,11 @@
 - (void)testDelete {
 
     
-    State *existing = [State MB_find:@"GA"];
+    State *existing = [State MB_findWithKey:@"GA"];
     XCTAssertNotNil(existing, @"georgia not found");
     [existing MB_delete];
 
-    State *savedState = [State MB_find:@"GA"];
+    State *savedState = [State MB_findWithKey:@"GA"];
     XCTAssertNil(savedState, @"deleted georgia but it is still here!");
 }
 
@@ -133,13 +133,13 @@
 
 - (void)testFindAndUpdate {
     
-    State *existing = [State MB_find:@"GA"];
+    State *existing = [State MB_findWithKey:@"GA"];
     XCTAssertNotNil(existing, @"georgia not found");
     
     existing.capital = @"MY HOUSE";
     [existing MB_save];
     
-    State *savedState = [State MB_find:@"GA"];
+    State *savedState = [State MB_findWithKey:@"GA"];
     XCTAssertTrue([savedState.capital isEqualToString:@"MY HOUSE"], @"capitals are different" );
 }
 
@@ -186,13 +186,13 @@
 
 - (void)testUpdateTime {
     
-    State *existing = [State MB_find:@"GA"];
+    State *existing = [State MB_findWithKey:@"GA"];
     XCTAssertNotNil(existing, @"georgia not found");
     existing.capital = @"MY HOUSE";
     NSDate *firstUpdateTime = [existing MB_updateTime];
     [existing MB_save];
     
-    State *savedState = [State MB_find:@"GA"];
+    State *savedState = [State MB_findWithKey:@"GA"];
     XCTAssertTrue([savedState.capital isEqualToString:@"MY HOUSE"], @"capitals are different" );
     NSDate *secondUpdateTime = [savedState MB_updateTime];
     XCTAssertTrue( [firstUpdateTime compare:secondUpdateTime] == NSOrderedAscending, @"Update times aren't in order %@ %@",firstUpdateTime,secondUpdateTime );
@@ -295,7 +295,46 @@
     }
 }
 
+- (void)testCount
+{
+    NSNumber *stateCount = [State MB_countAll];
+    XCTAssertTrue([stateCount intValue] == 50, @"State count wasn't 50 like it was supposed to be");
+}
 
+- (void)testCountInKey
+{
+    NSNumber *gaCount = [State MB_countWithKey:@"GA"];
+    XCTAssertTrue([gaCount intValue] == 1, @"Should have 1 state with key of GA");
+    NSNumber *gCount = [State MB_countLikeKey:@"G"];
+    XCTAssertTrue([gCount intValue] == 1, @"Should have 1 state with key like G");
+}
 
+- (void)testCountInTitle
+{
+    NSNumber *gaCount = [State MB_countWithTitle:@"GEORGIA"];
+    XCTAssertTrue([gaCount intValue] == 1, @"Should have 1 state with title of Georgia");
+    NSNumber *newCount = [State MB_countLikeTitle:@"NEW"];
+    XCTAssertTrue([newCount intValue] == 4,@"Should have 4 states with NEW in the title");
+}
+
+- (void)testCountInForeignKey
+{
+    NSNumber *gCount = [State MB_countWithForeignKey:@"G"];
+    XCTAssertTrue([gCount intValue] == 1, @"Should have 1 state with G foreign key");
+    gCount = [State MB_countLikeForeignKey:@"G"];
+    XCTAssertTrue([gCount intValue] == 1, @"Should have 1 state with G foreign key");
+}
+
+- (void)testCountRanges
+{
+    NSNumber *orderCount = [State MB_countOrderedFrom:@1000000 to:@2000000];
+    XCTAssertTrue([orderCount intValue] == 7, @"There should be 7 states between 1000000 and 2000000 population");
+    
+    NSNumber *createCount = [State MB_countCreatedFrom:[NSDate dateWithTimeInterval:-50000 sinceDate:[NSDate date]] to:[NSDate date]];
+    XCTAssertTrue([createCount intValue] == 50, @"There should be 50 states created today");
+    
+    NSNumber *updateCount = [State MB_countUpdatedFrom:[NSDate dateWithTimeInterval:-50000 sinceDate:[NSDate date]] to:[NSDate date]];
+    XCTAssertTrue([updateCount intValue] == 50, @"There should be 50 states updated today");
+}
 
 @end

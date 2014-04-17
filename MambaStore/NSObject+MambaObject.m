@@ -10,7 +10,9 @@
 #import "MambaStore.h"
 #import <Objc/runtime.h>
 
-
+//
+// Static constants used in the associated objects
+//
 static char const * const MambaObjectIDKey = "MambaObjectID";
 static char const * const MambaObjectCreateTimeKey = "MambaObjectCreateTime";
 static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
@@ -190,7 +192,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     NSString *collection = NSStringFromClass([self class]);
     
     __block id resultObject = nil;
-    [MambaStore selectFromCollection:collection where:[NSString stringWithFormat:@"objID = '%@'",objectID] order:@"" limit:-1 resultBlock:^(FMResultSet *results) {
+    [MambaStore selectFromCollection:collection where:@"objID = :objID" parameters:@{@"objID":objectID} order:MambaObjectOrderByOrderNumber limit:0 resultBlock:^(FMResultSet *results) {
         
         resultObject = [self MB_unarchive_withResults:results];
     }];
@@ -198,28 +200,13 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     return resultObject;
 }
 
-+ (NSArray *)MB_findAll {
-    
-    // get the default collection name
-    NSString *collection = NSStringFromClass([self class]);
-    
-    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    [MambaStore selectFromCollection:collection where:@"" order:@"orderNumber" limit:-1 resultBlock:^(FMResultSet *results) {
-        
-        id resultObject = [self MB_unarchive_withResults:results];
-        [resultArray addObject:resultObject];
-    }];
-    [self MB_performAfterLoadOnArray:resultArray];
-    return resultArray;
-}
-
-+ (id)MB_find:(NSString *)key {
++ (id)MB_findWithKey:(NSString *)key {
     
     // get the default collection name
     NSString *collection = NSStringFromClass([self class]);
     
     __block id resultObject = nil;
-    [MambaStore selectFromCollection:collection where:[NSString stringWithFormat:@"objKey = '%@'",key] order:@"" limit:-1 resultBlock:^(FMResultSet *results) {
+    [MambaStore selectFromCollection:collection where:@"objKey = :objKey" parameters:@{@"objKey":key} order:MambaObjectOrderByOrderNumber limit:0 resultBlock:^(FMResultSet *results) {
         
         resultObject = [self MB_unarchive_withResults:results];
     }];
@@ -227,78 +214,186 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     return resultObject;
 }
 
-+ (NSArray *)MB_findInTitle:(NSString *)condition {
-    return [self MB_search:@[[NSString stringWithFormat:@"objTitle like '%%%@%%'",condition]]];
++ (NSArray *)MB_findAll
+{
+    return [self MB_findAllLimit:0 orderBy:MambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findWithTitle:(NSString *)title {
-    return [self MB_search:@[[NSString stringWithFormat:@"objTitle = '%@'",title]]];
++ (NSArray *)MB_findAllLimit:(NSUInteger)limit
+{
+    return [self MB_findAllLimit:limit orderBy:MambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey {
-
-    return [self MB_search:@[[NSString stringWithFormat:@"objForeignKey = '%@'",foreignKey]]];
++ (NSArray *)MB_findAllOrderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_findAllLimit:0 orderBy:orderBy];
 }
 
-+ (NSArray *)MB_createdMostRecent:(int)top {
-    
-    // get the default collection name
-    NSString *collection = NSStringFromClass([self class]);
-    
-    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    [MambaStore selectFromCollection:collection where:@"" order:@"createTime DESC" limit:top resultBlock:^(FMResultSet *results) {
-        
-        id resultObject = [self MB_unarchive_withResults:results];
-        [resultArray addObject:resultObject];
-    }];
-    [self MB_performAfterLoadOnArray:resultArray];
-    return resultArray;
++ (NSArray *)MB_findAllLimit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_search:@[] parameters:@{} limit:limit orderBy:orderBy];
 }
 
-+ (NSArray *)MB_createdLeastRecent:(int)top {
-    
-    // get the default collection name
-    NSString *collection = NSStringFromClass([self class]);
-    
-    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    [MambaStore selectFromCollection:collection where:@"" order:@"createTime" limit:top resultBlock:^(FMResultSet *results) {
-
-        id resultObject = [self MB_unarchive_withResults:results];
-        [resultArray addObject:resultObject];
-    }];
-    [self MB_performAfterLoadOnArray:resultArray];
-    return resultArray;
++ (NSArray *)MB_findInKey:(NSString *)key
+{
+    return [self MB_findInKey:key limit:0 orderBy:MambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_updatedMostRecent:(int)top {
-    
-    // get the default collection name
-    NSString *collection = NSStringFromClass([self class]);
-    
-    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    [MambaStore selectFromCollection:collection where:@"" order:@"updateTime DESC" limit:top resultBlock:^(FMResultSet *results) {
-        
-        id resultObject = [self MB_unarchive_withResults:results];
-        [resultArray addObject:resultObject];
-    }];
-    [self MB_performAfterLoadOnArray:resultArray];
-    return resultArray;
++ (NSArray *)MB_findInKey:(NSString *)key limit:(NSUInteger)limit
+{
+    return [self MB_findInKey:key limit:limit orderBy:MambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_updatedLeastRecent:(int)top {
-    
-    // get the default collection name
-    NSString *collection = NSStringFromClass([self class]);
-    
-    __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    [MambaStore selectFromCollection:collection where:@"" order:@"updateTime" limit:top resultBlock:^(FMResultSet *results) {
-        
-        id resultObject = [self MB_unarchive_withResults:results];
-        [resultArray addObject:resultObject];
-    }];
-    [self MB_performAfterLoadOnArray:resultArray];
-    return resultArray;
++ (NSArray *)MB_findInKey:(NSString *)key orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_findInKey:key limit:0 orderBy:orderBy];
 }
+
++ (NSArray *)MB_findInKey:(NSString *)key limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_search:@[@"objKey like :objKey"] parameters:@{@"objKey":[NSString stringWithFormat:@"%%%@%%",key]} limit:limit orderBy:orderBy];
+}
+
++ (NSArray *)MB_findWithTitle:(NSString *)title
+{
+    return [self MB_findWithTitle:title limit:0 orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findWithTitle:(NSString *)title limit:(NSUInteger)limit
+{
+    return [self MB_findWithTitle:title limit:limit orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findWithTitle:(NSString *)title orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_findWithTitle:title limit:0 orderBy:orderBy];
+}
+
++ (NSArray *)MB_findWithTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_search:@[@"objTitle = :objTitle"] parameters:@{@"objTitle":title} limit:limit orderBy:orderBy];
+}
+
++ (NSArray *)MB_findInTitle:(NSString *)title
+{
+    return [self MB_findInTitle:title limit:0 orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findInTitle:(NSString *)title limit:(NSUInteger)limit
+{
+    return [self MB_findInTitle:title limit:limit orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findInTitle:(NSString *)title orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_findInTitle:title limit:0 orderBy:orderBy];
+}
+
++ (NSArray *)MB_findInTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_search:@[@"objTitle like :objTitle"] parameters:@{@"objTitle":[NSString stringWithFormat:@"%%%@%%",title]} limit:limit orderBy:orderBy];
+}
+
++ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey
+{
+    return [self MB_findWithForeignKey:foreignKey limit:0 orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit
+{
+    return [self MB_findWithForeignKey:foreignKey limit:limit orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_findWithForeignKey:foreignKey limit:0 orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_search:@[@"objForeignKey = :objForeignKey"] parameters:@{@"objForeignKey":foreignKey} limit:limit orderBy:orderBy];
+}
+
++ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey
+{
+    return [self MB_findInForeignKey:foreignKey limit:0 orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit
+{
+    return [self MB_findInForeignKey:foreignKey limit:limit orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_findInForeignKey:foreignKey limit:0 orderBy:orderBy];
+}
+
++ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_search:@[@"objForeignKey like :objForeignKey"] parameters:@{@"objForeignKey":[NSString stringWithFormat:@"%%%@%%",foreignKey]} limit:limit orderBy:orderBy];
+}
+
++ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to
+{
+    return [self MB_findWithOrderNumberFrom:from to:to limit:0 orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to limit:(NSUInteger)limit
+{
+    return [self MB_findWithOrderNumberFrom:from to:to limit:limit orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_findWithOrderNumberFrom:from to:to limit:0 orderBy:orderBy];
+}
+
++ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
+{
+    return [self MB_search:@[@"orderNumber >= :fromOrderNumber",@"orderNumber <= :toOrderNumber"] parameters:@{@"fromOrderNumber":from,@"toOrderNumber":to} limit:limit orderBy:orderBy];
+}
+
++ (NSArray *)MB_createdMostRecent:(NSUInteger)top
+{
+    return [self MB_search:@[] parameters:@{} limit:top orderBy:MambaObjectOrderByCreateTimeDescending];
+}
+
++ (NSArray *)MB_createdLeastRecent:(NSUInteger)top
+{
+    return [self MB_search:@[] parameters:@{} limit:top orderBy:MambaObjectOrderByCreateTime];
+}
+
++ (NSArray *)MB_createdFrom:(NSDate *)from to:(NSDate *)to
+{
+    return [self MB_search:@[@"createTime >= :fromTime",@"createTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:0 orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_createdFrom:(NSDate *)from to:(NSDate *)to limit:(NSUInteger)limit
+{
+    return [self MB_search:@[@"createTime >= :fromTime",@"createTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:limit orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_updatedMostRecent:(NSUInteger)top
+{
+    return [self MB_search:@[] parameters:@{} limit:top orderBy:MambaObjectOrderByUpdateTimeDescending];
+}
+
++ (NSArray *)MB_updatedLeastRecent:(NSUInteger)top
+{
+    return [self MB_search:@[] parameters:@{} limit:top orderBy:MambaObjectOrderByUpdateTime];
+}
+
++ (NSArray *)MB_updatedFrom:(NSDate *)from to:(NSDate *)to
+{
+    return [self MB_search:@[@"updateTime >= :fromTime",@"updateTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:0 orderBy:MambaObjectOrderByOrderNumber];
+}
+
++ (NSArray *)MB_updatedFrom:(NSDate *)from to:(NSDate *)to limit:(NSUInteger)limit
+{
+    return [self MB_search:@[@"updateTime >= :fromTime",@"updateTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:limit orderBy:MambaObjectOrderByOrderNumber];
+}
+
 
 #pragma mark - Count Methods
 
@@ -309,52 +404,52 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
  */
 + (NSNumber *)MB_countAll
 {
-    return [self MB_count:@[@""]];
+    return [self MB_count:@"" parameters:@{}];
 }
 
 + (NSNumber *)MB_countWithKey:(NSString *)key
 {
-    return [self MB_count:@[[NSString stringWithFormat:@"objKey = '%@'",key]]];
+    return [self MB_count:@"objKey = :objKey" parameters:@{@"objKey":key}];
 }
 
 + (NSNumber *)MB_countLikeKey:(NSString *)key
 {
-    return [self MB_count:@[[NSString stringWithFormat:@"objKey like '%%%@%%'",key]]];
+    return [self MB_count:@"objKey like :objKey" parameters:@{@"objKey":[NSString stringWithFormat:@"%%%@%%",key]}];
 }
 
 + (NSNumber *)MB_countWithTitle:(NSString *)title
 {
-    return [self MB_count:@[[NSString stringWithFormat:@"objTitle = '%@'",title]]];
+    return [self MB_count:@"objTitle = :objTitle" parameters:@{@"objTitle":title}];
 }
 
 + (NSNumber *)MB_countLikeTitle:(NSString *)title
 {
-    return [self MB_count:@[[NSString stringWithFormat:@"objTitle like '%%%@%%'",title]]];
+    return [self MB_count:@"objTitle like :objTitle" parameters:@{@"objTitle":[NSString stringWithFormat:@"%%%@%%",title]}];
 }
 
 + (NSNumber *)MB_countWithForeignKey:(NSString *)foreignKey
 {
-    return [self MB_count:@[[NSString stringWithFormat:@"objForeignKey = '%@'",foreignKey]]];
+    return [self MB_count:@"objForeignKey = :objForeignKey" parameters:@{@"objForeignKey":foreignKey}];
 }
 
 + (NSNumber *)MB_countLikeForeignKey:(NSString *)foreignKey
 {
-    return [self MB_count:@[[NSString stringWithFormat:@"objForeignKey like '%%%@%%'",foreignKey]]];
+    return [self MB_count:@"objForeignKey like :objForeignKey" parameters:@{@"objForeignKey":[NSString stringWithFormat:@"%%%@%%",foreignKey]}];
 }
 
 + (NSNumber *)MB_countOrderedFrom:(NSNumber *)fromOrderNumber to:(NSNumber *)toOrderNumber
 {
-    return [self MB_count:@[[NSString stringWithFormat:@"orderNumber >= %@",fromOrderNumber],[NSString stringWithFormat:@"orderNumber <= %@",toOrderNumber]]];
+    return [self MB_count:@"orderNumber >= :fromOrderNumber and orderNumber <= :toOrderNumber" parameters:@{@"fromOrderNumber":fromOrderNumber,@"toOrderNumber":toOrderNumber}];
 }
 
 + (NSNumber *)MB_countCreatedFrom:(NSDate *)fromDate to:(NSDate *)toDate
 {
-    return @0;
+    return [self MB_count:@"createTime >= :fromDate and createTime <= :toDate" parameters:@{@"fromDate":fromDate,@"toDate":toDate}];
 }
 
 + (NSNumber *)MB_countUpdatedFrom:(NSDate *)fromDate to:(NSDate *)toDate
 {
-    return @0;
+    return [self MB_count:@"updateTime >= :fromDate and updateTime <= :toDate" parameters:@{@"fromDate":fromDate,@"toDate":toDate}];
 }
 
 #pragma mark - Private methods
@@ -462,7 +557,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     return array;
 }
 
-+ (NSArray *)MB_search:(NSArray *)criteria {
++ (NSArray *)MB_search:(NSArray *)criteria parameters:(NSDictionary *)parameters limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy {
     
     NSString *collection = NSStringFromClass([self class]);
     
@@ -476,7 +571,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     }
     
     __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    [MambaStore selectFromCollection:collection where:where order:@"orderNumber, objTitle" limit:-1 resultBlock:^(FMResultSet *results) {
+    [MambaStore selectFromCollection:collection where:where parameters:parameters order:orderBy limit:limit resultBlock:^(FMResultSet *results) {
 
         id resultObject = [self MB_unarchive_withResults:results];
         [resultArray addObject:resultObject];
@@ -485,20 +580,10 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     return resultArray;
 }
 
-+ (NSNumber *)MB_count:(NSArray *)criteria {
++ (NSNumber *)MB_count:(NSString *)criteria parameters:(NSDictionary *)parameters {
     
     NSString *collection = NSStringFromClass([self class]);
-    
-    // setup the where clause
-    NSString *where = @"";
-    for ( NSString *whereCriteria in criteria ) {
-        if ( ![where isEqualToString:@""] ) {
-            where = [where stringByAppendingString:@" and "];
-        }
-        where = [where stringByAppendingString:whereCriteria];
-    }
-    
-    return [MambaStore countFromCollection:collection where:where];
+    return [MambaStore countFromCollection:collection where:criteria parameters:parameters];
 }
 
 @end

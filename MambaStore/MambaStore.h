@@ -32,7 +32,7 @@ static NSString *const kMambaStoreNotification = @"MambaStoreNotification";
 + (void)deleteObject:(id)object;
 
 #pragma mark - Query methods
-+ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause order:(NSString *)orderBy limit:(int)limit resultBlock:(void (^)(FMResultSet *results))resultBlock;
-+ (NSNumber *)countFromCollection:(NSString *)collection where:(NSString *)whereClause;
++ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters order:(MambaObjectOrderBy)orderBy limit:(NSUInteger)limit resultBlock:(void (^)(FMResultSet *results))resultBlock;
++ (NSNumber *)countFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters;
 
 @end

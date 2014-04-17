@@ -185,7 +185,7 @@ static NSMutableDictionary *staticCollectionSources;
 }
 
 #pragma mark - Query methods
-+ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause order:(NSString *)orderBy limit:(int)limit resultBlock:(void (^)(FMResultSet *))resultBlock {
++ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters order:(MambaObjectOrderBy)orderBy limit:(NSUInteger)limit resultBlock:(void (^)(FMResultSet *))resultBlock {
     
     if ( !resultBlock ) {
         NSLog(@"Error: no result block passed in, so pointless to run the query.");
@@ -197,26 +197,64 @@ static NSMutableDictionary *staticCollectionSources;
         querySql = [querySql stringByAppendingFormat:@" where %@",whereClause];
     }
     
-    if ( orderBy && ![orderBy isEqualToString:@""] ) {
-        querySql = [querySql stringByAppendingFormat:@" order by %@",orderBy];
+    NSString *orderByString = @"";
+    switch ( orderBy ) {
+    case MambaObjectOrderByKey:
+        orderByString = @"objKey";
+        break;
+    case MambaObjectOrderByTitle:
+        orderByString = @"objTitle";
+        break;
+    case MambaObjectOrderByForeignKey:
+        orderByString = @"objForeignKey";
+        break;
+    case MambaObjectOrderByCreateTime:
+        orderByString = @"createTime";
+        break;
+    case MambaObjectOrderByUpdateTime:
+        orderByString = @"updateTime";
+        break;
+    case MambaObjectOrderByOrderNumber:
+        orderByString = @"orderNumber";
+        break;
+        case MambaObjectOrderByKeyDescending:
+            orderByString = @"objKey DESC";
+            break;
+        case MambaObjectOrderByTitleDescending:
+            orderByString = @"objTitle DESC";
+            break;
+        case MambaObjectOrderByForeignKeyDescending:
+            orderByString = @"objForeignKey DESC";
+            break;
+        case MambaObjectOrderByCreateTimeDescending:
+            orderByString = @"createTime DESC";
+            break;
+        case MambaObjectOrderByUpdateTimeDescending:
+            orderByString = @"updateTime DESC";
+            break;
+        case MambaObjectOrderByOrderNumberDescending:
+            orderByString = @"orderNumber DESC";
+            break;
     }
+
+    querySql = [querySql stringByAppendingFormat:@" order by %@",orderByString];
     
     if ( limit > 0 ) {
-        querySql = [querySql stringByAppendingFormat:@" limit %d",limit];
+        querySql = [querySql stringByAppendingFormat:@" limit %lu",limit];
     }
     
     NSLog(@"MAMBASTORE## query: %@",querySql);
     __block FMResultSet *results = nil;
     [staticStore inDatabase:^(FMDatabase *db) {
 
-        results = [db executeQuery:querySql];
+        results = [db executeQuery:querySql withParameterDictionary:parameters];
         while ( [results next] ) {
             resultBlock(results);
         }
     }];
 }
 
-+ (NSNumber *)countFromCollection:(NSString *)collection where:(NSString *)whereClause
++ (NSNumber *)countFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters
 {
     NSString *querySql = [NSString stringWithFormat:@"select count(*) from %@",collection];
     if ( ![whereClause isEqualToString:@""] ) {
@@ -227,7 +265,7 @@ static NSMutableDictionary *staticCollectionSources;
     __block NSNumber *count = @0;
     [staticStore inDatabase:^(FMDatabase *db) {
         
-        FMResultSet *results = [db executeQuery:querySql];
+        FMResultSet *results = [db executeQuery:querySql withParameterDictionary:parameters];
         if ( [results next] ) {
             count = [NSNumber numberWithInt:[results intForColumnIndex:0]];
         }
