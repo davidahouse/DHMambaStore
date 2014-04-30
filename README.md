@@ -11,13 +11,13 @@ To install, grab the source and add to your project, or just use CocoaPods. If u
 just add this to your podfile:
 
 ```ruby
-  pod 'MambaStore'
+  pod 'MambaStore', :git => 'https://github.com/davidahouse/MambaStore.git'
 ```
 
 ## Requirements
 
 - Xcode 5, ARC.
-- iOS 7
+- iOS 6.1+
 - FMDB (this is handled automatically if you use CocoaPods)
 
 ## Getting started
@@ -121,7 +121,7 @@ Now when this object is stored, the uniqueKey property value is used to store th
 'key' field. This opens up a new method for loading the object.
 
 ```objectivec
-    MyObject *byKey = [MyObject MB_find:@"akey"];
+    MyObject *byKey = [MyObject MB_findWithKey:@"akey"];
 ```
 
 ### Everyone needs a title
@@ -230,6 +230,8 @@ the MambaObjectMethods protocol and responding to one of the optional methods.
 The MambaStoreTests project contains some automated tests that are a good place to see examples of how
 to use the store. An example of how to handle Parent/Child objects is there, along with an example of
 doing your own encoding.
+
+A more complete example can be found in my MambaTweets repo: [MambaTweets](https://github.com/davidahouse/MambaTweets)
 
 ### License
 
