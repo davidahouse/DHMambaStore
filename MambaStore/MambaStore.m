@@ -240,7 +240,7 @@ static NSMutableDictionary *staticCollectionSources;
     querySql = [querySql stringByAppendingFormat:@" order by %@",orderByString];
     
     if ( limit > 0 ) {
-        querySql = [querySql stringByAppendingFormat:@" limit %lu",limit];
+        querySql = [querySql stringByAppendingFormat:@" limit %lu",(unsigned long)limit];
     }
     
     // NSLog(@"MAMBASTORE## query: %@",querySql);

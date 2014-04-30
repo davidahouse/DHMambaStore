@@ -3,6 +3,7 @@ Pod::Spec.new do |s|
   s.version      = '0.2.0'
   s.summary      = 'An object store that uses FMDB to facilitate persisting your objects.'
   s.source  = { :git => "https://github.com/davidahouse/MambaStore.git", :tag => s.version.to_s }
+  s.homepage = "https://github.com/davidahouse/MambaStore"
   s.author       = {
     'David House' => 'davidahouse@gmail.com'
   }
