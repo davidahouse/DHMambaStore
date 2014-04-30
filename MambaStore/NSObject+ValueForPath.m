@@ -56,7 +56,6 @@
  
     if ( [path count] == 0 ) {
         // probably shouldn't ever get here, something bad happened
-        NSLog(@"WARNING: setValue got to an empty path");
     }
     else if ( [path count] == 1 ) {
  

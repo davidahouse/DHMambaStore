@@ -35,7 +35,7 @@ static NSMutableDictionary *staticCollectionSources;
         [MambaStore closeStore];
     }
     
-    NSLog(@"opening store at path: %@",storePath);
+    // NSLog(@"opening store at path: %@",storePath);
     staticStore = [FMDatabaseQueue databaseQueueWithPath:storePath];
 }
 
@@ -243,7 +243,7 @@ static NSMutableDictionary *staticCollectionSources;
         querySql = [querySql stringByAppendingFormat:@" limit %lu",limit];
     }
     
-    NSLog(@"MAMBASTORE## query: %@",querySql);
+    // NSLog(@"MAMBASTORE## query: %@",querySql);
     __block FMResultSet *results = nil;
     [staticStore inDatabase:^(FMDatabase *db) {
 
@@ -261,7 +261,7 @@ static NSMutableDictionary *staticCollectionSources;
         querySql = [querySql stringByAppendingFormat:@" where %@",whereClause];
     }
     
-    NSLog(@"MAMBASTORE## query: %@",querySql);
+    // NSLog(@"MAMBASTORE## query: %@",querySql);
     __block NSNumber *count = @0;
     [staticStore inDatabase:^(FMDatabase *db) {
         
@@ -290,7 +290,7 @@ static NSMutableDictionary *staticCollectionSources;
         
         // create a table for this collection
         NSString *createSQL = [NSString stringWithFormat:@"create table if not exists %@ (objID text, objKey text, objForeignKey text, objTitle text, createTime real, updateTime real, orderNumber integer, objBody blob)",collection];
-        NSLog(@"createSQL: %@",createSQL);
+        // NSLog(@"createSQL: %@",createSQL);
         
         NSString *createPKIndexSQL = [NSString stringWithFormat:@"create index if not exists %@_pk ON %@ (objID)",collection,collection];
 
