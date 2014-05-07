@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NSObject+MambaObject.h"
+#import "NSObject+DHMambaObject.h"
 
-@interface ParentObject : NSObject<MambaObjectProperties,MambaObjectMethods>
+@interface ParentObject : NSObject<DHMambaObjectProperties,DHMambaObjectMethods>
 
 #pragma mark - Properties
 @property (nonatomic,strong) NSString *parentName;

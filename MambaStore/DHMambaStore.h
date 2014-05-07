@@ -1,5 +1,5 @@
 //
-//  MambaStore.h
+//  DHMambaStore.h
 //  
 //
 //  Created by David House on 9/27/13.
@@ -26,13 +26,11 @@
 
 #import <Foundation/Foundation.h>
 #import "FMDatabase.h"
-#import "NSObject+MambaObject.h"
+#import "NSObject+DHMambaObject.h"
 
-@class MambaDocument;
+static NSString *const kDHMambaStoreNotification = @"DHMambaStoreNotification";
 
-static NSString *const kMambaStoreNotification = @"MambaStoreNotification";
-
-@interface MambaStore : NSObject
+@interface DHMambaStore : NSObject
 
 #pragma mark - Open/Close Methods
 + (void)openStore;
@@ -50,7 +48,7 @@ static NSString *const kMambaStoreNotification = @"MambaStoreNotification";
 + (void)deleteObject:(id)object;
 
 #pragma mark - Query methods
-+ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters order:(MambaObjectOrderBy)orderBy limit:(NSUInteger)limit resultBlock:(void (^)(FMResultSet *results))resultBlock;
++ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters order:(DHMambaObjectOrderBy)orderBy limit:(NSUInteger)limit resultBlock:(void (^)(FMResultSet *results))resultBlock;
 + (NSNumber *)countFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters;
 
 @end

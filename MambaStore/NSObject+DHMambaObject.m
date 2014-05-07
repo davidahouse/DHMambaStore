@@ -1,5 +1,5 @@
 //
-//  NSObject+MambaObject.m
+//  NSObject+DHMambaObject.m
 //  
 //
 //  Created by David House on 1/23/14.
@@ -24,24 +24,24 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "NSObject+MambaObject.h"
-#import "MambaStore.h"
+#import "NSObject+DHMambaObject.h"
+#import "DHMambaStore.h"
 #import <Objc/runtime.h>
 
 //
 // Static constants used in the associated objects
 //
-static char const * const MambaObjectIDKey = "MambaObjectID";
-static char const * const MambaObjectCreateTimeKey = "MambaObjectCreateTime";
-static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
+static char const * const DHMambaObjectIDKey = "MambaObjectID";
+static char const * const DHMambaObjectCreateTimeKey = "MambaObjectCreateTime";
+static char const * const DHMambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 
-@implementation NSObject (MambaObject)
+@implementation NSObject (DHMambaObject)
 
 
 #pragma mark - Convenience methods for getting & setting mamba specific properties
 - (BOOL)MB_has_objID {
 
-    if ( objc_getAssociatedObject(self, MambaObjectIDKey) ) {
+    if ( objc_getAssociatedObject(self, DHMambaObjectIDKey) ) {
         return YES;
     }
     else {
@@ -53,12 +53,12 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     
     // Look in associated object storage for the object ID. If not found, we need to create one!
     if ( [self MB_has_objID] ) {
-        NSString *objID = objc_getAssociatedObject(self, MambaObjectIDKey);
+        NSString *objID = objc_getAssociatedObject(self, DHMambaObjectIDKey);
         return objID;
     }
     else {
         NSString *objID = [[NSUUID UUID] UUIDString];
-        objc_setAssociatedObject(self, MambaObjectIDKey, objID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self, DHMambaObjectIDKey, objID, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return objID;
     }
 }
@@ -147,9 +147,9 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 - (NSDate *)MB_createTime {
     
     // Look in associated object storage. If not found, we need to create one!
-    if ( objc_getAssociatedObject(self, MambaObjectCreateTimeKey) ) {
+    if ( objc_getAssociatedObject(self, DHMambaObjectCreateTimeKey) ) {
 
-        NSDate *createTime = objc_getAssociatedObject(self, MambaObjectCreateTimeKey);
+        NSDate *createTime = objc_getAssociatedObject(self, DHMambaObjectCreateTimeKey);
         return createTime;
     }
     else {
@@ -160,9 +160,9 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 - (NSDate *)MB_updateTime {
     
     // Look in associated object storage. If not found, we need to create one!
-    if ( objc_getAssociatedObject(self, MambaObjectCreateTimeKey) ) {
+    if ( objc_getAssociatedObject(self, DHMambaObjectCreateTimeKey) ) {
         
-        NSDate *updateTime = objc_getAssociatedObject(self, MambaObjectUpdateTimeKey);
+        NSDate *updateTime = objc_getAssociatedObject(self, DHMambaObjectUpdateTimeKey);
         return updateTime;
     }
     else {
@@ -177,10 +177,10 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     // if this object hasn't been in the store yet, we
     // need to insert it, otherwise update it.
     if ( ![self MB_has_objID] ) {
-        [MambaStore insertObject:self];
+        [DHMambaStore insertObject:self];
     }
     else {
-        [MambaStore updateObject:self];
+        [DHMambaStore updateObject:self];
     }
     
     if ( [self respondsToSelector:@selector(mambaAfterSave)] ) {
@@ -190,7 +190,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 
 - (void)MB_delete {
     
-    [MambaStore deleteObject:self];
+    [DHMambaStore deleteObject:self];
 
     if ( [self respondsToSelector:@selector(mambaAfterDelete)] ) {
         [self performSelector:@selector(mambaAfterDelete)];
@@ -200,7 +200,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 - (void)MB_deleteAll {
     
     NSString *collection = NSStringFromClass([self class]);
-    [MambaStore emptyCollection:collection];
+    [DHMambaStore emptyCollection:collection];
 }
 
 #pragma mark - Search methods
@@ -210,7 +210,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     NSString *collection = NSStringFromClass([self class]);
     
     __block id resultObject = nil;
-    [MambaStore selectFromCollection:collection where:@"objID = :objID" parameters:@{@"objID":objectID} order:MambaObjectOrderByOrderNumber limit:0 resultBlock:^(FMResultSet *results) {
+    [DHMambaStore selectFromCollection:collection where:@"objID = :objID" parameters:@{@"objID":objectID} order:DHMambaObjectOrderByOrderNumber limit:0 resultBlock:^(FMResultSet *results) {
         
         resultObject = [self MB_unarchive_withResults:results];
     }];
@@ -224,7 +224,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     NSString *collection = NSStringFromClass([self class]);
     
     __block id resultObject = nil;
-    [MambaStore selectFromCollection:collection where:@"objKey = :objKey" parameters:@{@"objKey":key} order:MambaObjectOrderByOrderNumber limit:0 resultBlock:^(FMResultSet *results) {
+    [DHMambaStore selectFromCollection:collection where:@"objKey = :objKey" parameters:@{@"objKey":key} order:DHMambaObjectOrderByOrderNumber limit:0 resultBlock:^(FMResultSet *results) {
         
         resultObject = [self MB_unarchive_withResults:results];
     }];
@@ -234,182 +234,182 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 
 + (NSArray *)MB_findAll
 {
-    return [self MB_findAllLimit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findAllLimit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_findAllLimit:(NSUInteger)limit
 {
-    return [self MB_findAllLimit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findAllLimit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findAllOrderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findAllOrderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_findAllLimit:0 orderBy:orderBy];
 }
 
-+ (NSArray *)MB_findAllLimit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findAllLimit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_search:@[] parameters:@{} limit:limit orderBy:orderBy];
 }
 
 + (NSArray *)MB_findInKey:(NSString *)key
 {
-    return [self MB_findInKey:key limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findInKey:key limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_findInKey:(NSString *)key limit:(NSUInteger)limit
 {
-    return [self MB_findInKey:key limit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findInKey:key limit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findInKey:(NSString *)key orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findInKey:(NSString *)key orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_findInKey:key limit:0 orderBy:orderBy];
 }
 
-+ (NSArray *)MB_findInKey:(NSString *)key limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findInKey:(NSString *)key limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_search:@[@"objKey like :objKey"] parameters:@{@"objKey":[NSString stringWithFormat:@"%%%@%%",key]} limit:limit orderBy:orderBy];
 }
 
 + (NSArray *)MB_findWithTitle:(NSString *)title
 {
-    return [self MB_findWithTitle:title limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findWithTitle:title limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_findWithTitle:(NSString *)title limit:(NSUInteger)limit
 {
-    return [self MB_findWithTitle:title limit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findWithTitle:title limit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findWithTitle:(NSString *)title orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findWithTitle:(NSString *)title orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_findWithTitle:title limit:0 orderBy:orderBy];
 }
 
-+ (NSArray *)MB_findWithTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findWithTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_search:@[@"objTitle = :objTitle"] parameters:@{@"objTitle":title} limit:limit orderBy:orderBy];
 }
 
 + (NSArray *)MB_findInTitle:(NSString *)title
 {
-    return [self MB_findInTitle:title limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findInTitle:title limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_findInTitle:(NSString *)title limit:(NSUInteger)limit
 {
-    return [self MB_findInTitle:title limit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findInTitle:title limit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findInTitle:(NSString *)title orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findInTitle:(NSString *)title orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_findInTitle:title limit:0 orderBy:orderBy];
 }
 
-+ (NSArray *)MB_findInTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findInTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_search:@[@"objTitle like :objTitle"] parameters:@{@"objTitle":[NSString stringWithFormat:@"%%%@%%",title]} limit:limit orderBy:orderBy];
 }
 
 + (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey
 {
-    return [self MB_findWithForeignKey:foreignKey limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findWithForeignKey:foreignKey limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit
 {
-    return [self MB_findWithForeignKey:foreignKey limit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findWithForeignKey:foreignKey limit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey orderBy:(DHMambaObjectOrderBy)orderBy
 {
-    return [self MB_findWithForeignKey:foreignKey limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findWithForeignKey:foreignKey limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_search:@[@"objForeignKey = :objForeignKey"] parameters:@{@"objForeignKey":foreignKey} limit:limit orderBy:orderBy];
 }
 
 + (NSArray *)MB_findInForeignKey:(NSString *)foreignKey
 {
-    return [self MB_findInForeignKey:foreignKey limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findInForeignKey:foreignKey limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_findInForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit
 {
-    return [self MB_findInForeignKey:foreignKey limit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findInForeignKey:foreignKey limit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_findInForeignKey:foreignKey limit:0 orderBy:orderBy];
 }
 
-+ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_search:@[@"objForeignKey like :objForeignKey"] parameters:@{@"objForeignKey":[NSString stringWithFormat:@"%%%@%%",foreignKey]} limit:limit orderBy:orderBy];
 }
 
 + (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to
 {
-    return [self MB_findWithOrderNumberFrom:from to:to limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findWithOrderNumberFrom:from to:to limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to limit:(NSUInteger)limit
 {
-    return [self MB_findWithOrderNumberFrom:from to:to limit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_findWithOrderNumberFrom:from to:to limit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
-+ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_findWithOrderNumberFrom:from to:to limit:0 orderBy:orderBy];
 }
 
-+ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy
++ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy
 {
     return [self MB_search:@[@"orderNumber >= :fromOrderNumber",@"orderNumber <= :toOrderNumber"] parameters:@{@"fromOrderNumber":from,@"toOrderNumber":to} limit:limit orderBy:orderBy];
 }
 
 + (NSArray *)MB_createdMostRecent:(NSUInteger)top
 {
-    return [self MB_search:@[] parameters:@{} limit:top orderBy:MambaObjectOrderByCreateTimeDescending];
+    return [self MB_search:@[] parameters:@{} limit:top orderBy:DHMambaObjectOrderByCreateTimeDescending];
 }
 
 + (NSArray *)MB_createdLeastRecent:(NSUInteger)top
 {
-    return [self MB_search:@[] parameters:@{} limit:top orderBy:MambaObjectOrderByCreateTime];
+    return [self MB_search:@[] parameters:@{} limit:top orderBy:DHMambaObjectOrderByCreateTime];
 }
 
 + (NSArray *)MB_createdFrom:(NSDate *)from to:(NSDate *)to
 {
-    return [self MB_search:@[@"createTime >= :fromTime",@"createTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_search:@[@"createTime >= :fromTime",@"createTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_createdFrom:(NSDate *)from to:(NSDate *)to limit:(NSUInteger)limit
 {
-    return [self MB_search:@[@"createTime >= :fromTime",@"createTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_search:@[@"createTime >= :fromTime",@"createTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_updatedMostRecent:(NSUInteger)top
 {
-    return [self MB_search:@[] parameters:@{} limit:top orderBy:MambaObjectOrderByUpdateTimeDescending];
+    return [self MB_search:@[] parameters:@{} limit:top orderBy:DHMambaObjectOrderByUpdateTimeDescending];
 }
 
 + (NSArray *)MB_updatedLeastRecent:(NSUInteger)top
 {
-    return [self MB_search:@[] parameters:@{} limit:top orderBy:MambaObjectOrderByUpdateTime];
+    return [self MB_search:@[] parameters:@{} limit:top orderBy:DHMambaObjectOrderByUpdateTime];
 }
 
 + (NSArray *)MB_updatedFrom:(NSDate *)from to:(NSDate *)to
 {
-    return [self MB_search:@[@"updateTime >= :fromTime",@"updateTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:0 orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_search:@[@"updateTime >= :fromTime",@"updateTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:0 orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 + (NSArray *)MB_updatedFrom:(NSDate *)from to:(NSDate *)to limit:(NSUInteger)limit
 {
-    return [self MB_search:@[@"updateTime >= :fromTime",@"updateTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:limit orderBy:MambaObjectOrderByOrderNumber];
+    return [self MB_search:@[@"updateTime >= :fromTime",@"updateTime <= :toTime"] parameters:@{@"fromTime":from,@"toTime":to} limit:limit orderBy:DHMambaObjectOrderByOrderNumber];
 }
 
 
@@ -483,11 +483,11 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     }
     
     // Load in any of the mamba properties
-    objc_setAssociatedObject(resultObject, MambaObjectIDKey, [results objectForColumnName:@"objID"], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(resultObject, DHMambaObjectIDKey, [results objectForColumnName:@"objID"], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     NSDate *createDate = [NSDate dateWithTimeIntervalSince1970:[[results objectForColumnName:@"createTime"] doubleValue]];
-    objc_setAssociatedObject(resultObject, MambaObjectCreateTimeKey, createDate, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(resultObject, DHMambaObjectCreateTimeKey, createDate, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     NSDate *updateDate = [NSDate dateWithTimeIntervalSince1970:[[results objectForColumnName:@"updateTime"] doubleValue]];
-    objc_setAssociatedObject(resultObject, MambaObjectUpdateTimeKey, updateDate, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(resultObject, DHMambaObjectUpdateTimeKey, updateDate, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     
     // if object can't decode itself, we need to do it
     if ( !decoded ) {
@@ -570,7 +570,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     return array;
 }
 
-+ (NSArray *)MB_search:(NSArray *)criteria parameters:(NSDictionary *)parameters limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy {
++ (NSArray *)MB_search:(NSArray *)criteria parameters:(NSDictionary *)parameters limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy {
     
     NSString *collection = NSStringFromClass([self class]);
     
@@ -584,7 +584,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
     }
     
     __block NSMutableArray *resultArray = [[NSMutableArray alloc] init];
-    [MambaStore selectFromCollection:collection where:where parameters:parameters order:orderBy limit:limit resultBlock:^(FMResultSet *results) {
+    [DHMambaStore selectFromCollection:collection where:where parameters:parameters order:orderBy limit:limit resultBlock:^(FMResultSet *results) {
 
         id resultObject = [self MB_unarchive_withResults:results];
         [resultArray addObject:resultObject];
@@ -596,7 +596,7 @@ static char const * const MambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 + (NSNumber *)MB_count:(NSString *)criteria parameters:(NSDictionary *)parameters {
     
     NSString *collection = NSStringFromClass([self class]);
-    return [MambaStore countFromCollection:collection where:criteria parameters:parameters];
+    return [DHMambaStore countFromCollection:collection where:criteria parameters:parameters];
 }
 
 @end

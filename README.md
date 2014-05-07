@@ -1,9 +1,12 @@
 ## About
 
-MambaStore is an ObjectiveC library that makes it easy to persist a set of objects. This
+DHMambaStore is an ObjectiveC library that makes it easy to persist a set of objects. This
 library is geared towards developers who want more power than NSCoding can provide, yet
 not as much power as CoreData. The library is designed to work with the least amount of code
 for simple tasks, while providing enough hooks for more advanced needs.
+
+This is still a very new library and has not been extensively tested or used in projects. Use
+at your own risk until more validation is done.
 
 ## Installing
 
@@ -11,7 +14,7 @@ To install, grab the source and add to your project, or just use CocoaPods. If u
 just add this to your podfile:
 
 ```ruby
-  pod 'MambaStore', :git => 'https://github.com/davidahouse/MambaStore.git'
+  pod 'DHMambaStore', :git => 'https://github.com/davidahouse/DHMambaStore.git'
 ```
 
 ## Requirements
@@ -27,7 +30,7 @@ just add this to your podfile:
 Import the main MambaStore header
 
 ```objectivec
-  #import "NSObject+MambaStore.h"
+  #import "NSObject+DHMambaStore.h"
 ```
 
 Take any instance of an object and store it.
@@ -96,11 +99,11 @@ When you have the ID, you can reload that object from the store using it.
 
 Your objects may have their own key that you want to use to find by.
 To tell the MambaStore that you want to use your own key you need to
-implement a method on the MambaObjectProperties protocol.
+implement a method on the DHMambaObjectProperties protocol.
 
 ```objectivec
 
-  @interface MyObject : NSObject<MambaObjectProperties>
+  @interface MyObject : NSObject<DHMambaObjectProperties>
 
   @property (nonatomic,strong) NSString *uniqueKey;
 
@@ -152,7 +155,7 @@ and MB_findInTitle that provides for partial matching.
 ### Foreign key
 
 Another common need is to connect records together in a parent/child relationship. Mamba provides two methods
-in the MambaObjectProperties protocol to get and set the foreign key for an object. Once you have implemented
+in the DHMambaObjectProperties protocol to get and set the foreign key for an object. Once you have implemented
 this, the helper method MB_findWithForeignKey is available for loading records.
 
 ```objectivec

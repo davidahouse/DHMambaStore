@@ -1,5 +1,5 @@
 //
-//  NSObject+MambaObject.h
+//  NSObject+DHMambaObject.h
 //  
 //
 //  Created by David House on 1/23/14.
@@ -29,26 +29,26 @@
 //
 // OrderBy enumeration
 //
-typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
-    MambaObjectOrderByKey = 0,
-    MambaObjectOrderByTitle = 1,
-    MambaObjectOrderByForeignKey = 2,
-    MambaObjectOrderByCreateTime = 3,
-    MambaObjectOrderByUpdateTime = 4,
-    MambaObjectOrderByOrderNumber = 5,
-    MambaObjectOrderByKeyDescending = 6,
-    MambaObjectOrderByTitleDescending = 7,
-    MambaObjectOrderByForeignKeyDescending = 8,
-    MambaObjectOrderByCreateTimeDescending = 9,
-    MambaObjectOrderByUpdateTimeDescending = 10,
-    MambaObjectOrderByOrderNumberDescending = 11
+typedef NS_ENUM(NSUInteger, DHMambaObjectOrderBy) {
+    DHMambaObjectOrderByKey = 0,
+    DHMambaObjectOrderByTitle = 1,
+    DHMambaObjectOrderByForeignKey = 2,
+    DHMambaObjectOrderByCreateTime = 3,
+    DHMambaObjectOrderByUpdateTime = 4,
+    DHMambaObjectOrderByOrderNumber = 5,
+    DHMambaObjectOrderByKeyDescending = 6,
+    DHMambaObjectOrderByTitleDescending = 7,
+    DHMambaObjectOrderByForeignKeyDescending = 8,
+    DHMambaObjectOrderByCreateTimeDescending = 9,
+    DHMambaObjectOrderByUpdateTimeDescending = 10,
+    DHMambaObjectOrderByOrderNumberDescending = 11
 };
 
 /**
  * Protocol for extending the object with specific properties that MambaStore
  * will use when saving/loading the object.
  */
-@protocol MambaObjectProperties <NSObject>
+@protocol DHMambaObjectProperties <NSObject>
 @optional
 
 /** Return the key to use when saving this object into the store.
@@ -90,7 +90,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
 /** Protocol for extending the object with methods that allow you to customize
  * saving and loading of the object
  */
-@protocol MambaObjectMethods <NSObject>
+@protocol DHMambaObjectMethods <NSObject>
 @optional
 
 /** Called after the object is saved into the repository */
@@ -109,7 +109,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * Can be applied to any object. The properties of that object will
  * be automatically serialized and deserialized from the store.
  */
- @interface NSObject (MambaObject)
+ @interface NSObject (DHMambaObject)
 
 #pragma mark - Convenience methods for getting & setting mamba specific properties
 
@@ -218,14 +218,14 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findAllOrderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findAllOrderBy:(DHMambaObjectOrderBy)orderBy;
 
 /** Find all objects of the class, limited to a certain number of results and with a specified order.
  * @param limit The maximum number of objects to return
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findAllLimit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findAllLimit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy;
 
 //
 // Find doing a LIKE on the objKey field
@@ -249,7 +249,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findInKey:(NSString *)key orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findInKey:(NSString *)key orderBy:(DHMambaObjectOrderBy)orderBy;
 
 /** Find all objects with a value contained in the key, limited to a certain number of results with a specified order.
  * @param key The value to search in the key field
@@ -257,7 +257,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findInKey:(NSString *)key limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findInKey:(NSString *)key limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy;
 
 //
 // Find matching a title
@@ -281,7 +281,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findWithTitle:(NSString *)title orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findWithTitle:(NSString *)title orderBy:(DHMambaObjectOrderBy)orderBy;
 
 /** Find all objects matching a specific title, limited to a certain number of results and ordered by a specified order
  * @param title The exact title to match
@@ -289,7 +289,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findWithTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findWithTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy;
 
 //
 // Find doing a LIKE on the objTitle field
@@ -313,7 +313,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findInTitle:(NSString *)title orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findInTitle:(NSString *)title orderBy:(DHMambaObjectOrderBy)orderBy;
 
 /** Find all objects with a value found in the title, limited by a certain number of results and ordered by a specified order.
  * @param title The value to search in the title
@@ -321,7 +321,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findInTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findInTitle:(NSString *)title limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy;
 
 //
 // Find matching a foreign key
@@ -345,7 +345,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey orderBy:(DHMambaObjectOrderBy)orderBy;
 
 /** Find all objects matching a specific foreign key, limited to a certain number of results and ordered by a specified order
  * @param foreignKey The exact foreign key to match
@@ -353,7 +353,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findWithForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy;
 
 //
 // Find doing a LIKE on the objForeignKey field
@@ -377,7 +377,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey orderBy:(DHMambaObjectOrderBy)orderBy;
 
 /** Find all objects with a value found in the foreign key, limited by a certain number of results and ordered by a specified order.
  * @param foreignKey The value to search in the foreign key
@@ -385,7 +385,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findInForeignKey:(NSString *)foreignKey limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy;
 
 //
 // OrderBy searching
@@ -412,7 +412,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to orderBy:(DHMambaObjectOrderBy)orderBy;
 
 /** Find all objects with an orderNumber with a certain range, limited to a certain number of results and ordered
  * by a specified order.
@@ -422,7 +422,7 @@ typedef NS_ENUM(NSUInteger, MambaObjectOrderBy) {
  * @param orderBy The condition to order the results by
  * @return An array of found objects
  */
-+ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to limit:(NSUInteger)limit orderBy:(MambaObjectOrderBy)orderBy;
++ (NSArray *)MB_findWithOrderNumberFrom:(NSNumber *)from to:(NSNumber *)to limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy;
 
 //
 // Date searching

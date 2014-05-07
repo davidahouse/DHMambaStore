@@ -12,7 +12,7 @@
 		94695DA417F65C5200B1E6A9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94695DA317F65C5200B1E6A9 /* UIKit.framework */; };
 		94695DAA17F65C5200B1E6A9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 94695DA817F65C5200B1E6A9 /* InfoPlist.strings */; };
 		94695DAC17F65C5200B1E6A9 /* MambaStoreTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 94695DAB17F65C5200B1E6A9 /* MambaStoreTests.m */; };
-		94695DB417F65CBD00B1E6A9 /* MambaStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 94695DB317F65CBD00B1E6A9 /* MambaStore.m */; };
+		94695DB417F65CBD00B1E6A9 /* DHMambaStore.m in Sources */ = {isa = PBXBuildFile; fileRef = 94695DB317F65CBD00B1E6A9 /* DHMambaStore.m */; };
 		94695DC017F6635E00B1E6A9 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 94695DB717F6635E00B1E6A9 /* FMDatabase.m */; };
 		94695DC117F6635E00B1E6A9 /* FMDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 94695DB917F6635E00B1E6A9 /* FMDatabaseAdditions.m */; };
 		94695DC217F6635E00B1E6A9 /* FMDatabasePool.m in Sources */ = {isa = PBXBuildFile; fileRef = 94695DBB17F6635E00B1E6A9 /* FMDatabasePool.m */; };
@@ -25,7 +25,7 @@
 		946E38D118E8A19000C319EC /* ParentObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 946E38D018E8A19000C319EC /* ParentObject.m */; };
 		946E38D418E8A23500C319EC /* ChildObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 946E38D318E8A23500C319EC /* ChildObject.m */; };
 		946E38D718E8E0CB00C319EC /* SelfCodedObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 946E38D618E8E0CB00C319EC /* SelfCodedObject.m */; };
-		94C87CE01891FB8D00856B0E /* NSObject+MambaObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 94C87CDE1891FB8D00856B0E /* NSObject+MambaObject.m */; };
+		94C87CE01891FB8D00856B0E /* NSObject+DHMambaObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 94C87CDE1891FB8D00856B0E /* NSObject+DHMambaObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,8 +37,8 @@
 		94695DA917F65C5200B1E6A9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		94695DAB17F65C5200B1E6A9 /* MambaStoreTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MambaStoreTests.m; sourceTree = "<group>"; };
 		94695DAD17F65C5200B1E6A9 /* MambaStoreTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MambaStoreTests-Prefix.pch"; sourceTree = "<group>"; };
-		94695DB217F65CBD00B1E6A9 /* MambaStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MambaStore.h; path = ../../MambaStore/MambaStore.h; sourceTree = "<group>"; };
-		94695DB317F65CBD00B1E6A9 /* MambaStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MambaStore.m; path = ../../MambaStore/MambaStore.m; sourceTree = "<group>"; };
+		94695DB217F65CBD00B1E6A9 /* DHMambaStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DHMambaStore.h; path = ../../MambaStore/DHMambaStore.h; sourceTree = "<group>"; };
+		94695DB317F65CBD00B1E6A9 /* DHMambaStore.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DHMambaStore.m; path = ../../MambaStore/DHMambaStore.m; sourceTree = "<group>"; };
 		94695DB617F6635E00B1E6A9 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
 		94695DB717F6635E00B1E6A9 /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
 		94695DB817F6635E00B1E6A9 /* FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseAdditions.h; sourceTree = "<group>"; };
@@ -62,8 +62,8 @@
 		946E38D318E8A23500C319EC /* ChildObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChildObject.m; sourceTree = "<group>"; };
 		946E38D518E8E0CB00C319EC /* SelfCodedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelfCodedObject.h; sourceTree = "<group>"; };
 		946E38D618E8E0CB00C319EC /* SelfCodedObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SelfCodedObject.m; sourceTree = "<group>"; };
-		94C87CDE1891FB8D00856B0E /* NSObject+MambaObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+MambaObject.m"; path = "../../MambaStore/NSObject+MambaObject.m"; sourceTree = "<group>"; };
-		94C87CDF1891FB8D00856B0E /* NSObject+MambaObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+MambaObject.h"; path = "../../MambaStore/NSObject+MambaObject.h"; sourceTree = "<group>"; };
+		94C87CDE1891FB8D00856B0E /* NSObject+DHMambaObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+DHMambaObject.m"; path = "../../MambaStore/NSObject+DHMambaObject.m"; sourceTree = "<group>"; };
+		94C87CDF1891FB8D00856B0E /* NSObject+DHMambaObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+DHMambaObject.h"; path = "../../MambaStore/NSObject+DHMambaObject.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,7 +117,7 @@
 				94695DD017F66FEF00B1E6A9 /* State.m */,
 				94695DD117F66FEF00B1E6A9 /* States.json */,
 				94695DB517F6635E00B1E6A9 /* fmdb */,
-				94695DB117F65C9500B1E6A9 /* MambaStore */,
+				94695DB117F65C9500B1E6A9 /* DHMambaStore */,
 				94695DAB17F65C5200B1E6A9 /* MambaStoreTests.m */,
 				94695DA617F65C5200B1E6A9 /* Supporting Files */,
 				946E38CF18E8A19000C319EC /* ParentObject.h */,
@@ -140,17 +140,17 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		94695DB117F65C9500B1E6A9 /* MambaStore */ = {
+		94695DB117F65C9500B1E6A9 /* DHMambaStore */ = {
 			isa = PBXGroup;
 			children = (
-				94C87CDF1891FB8D00856B0E /* NSObject+MambaObject.h */,
-				94C87CDE1891FB8D00856B0E /* NSObject+MambaObject.m */,
+				94C87CDF1891FB8D00856B0E /* NSObject+DHMambaObject.h */,
+				94C87CDE1891FB8D00856B0E /* NSObject+DHMambaObject.m */,
 				94695DCB17F66CDA00B1E6A9 /* NSObject+ValueForPath.h */,
 				94695DCC17F66CDA00B1E6A9 /* NSObject+ValueForPath.m */,
-				94695DB217F65CBD00B1E6A9 /* MambaStore.h */,
-				94695DB317F65CBD00B1E6A9 /* MambaStore.m */,
+				94695DB217F65CBD00B1E6A9 /* DHMambaStore.h */,
+				94695DB317F65CBD00B1E6A9 /* DHMambaStore.m */,
 			);
-			name = MambaStore;
+			name = DHMambaStore;
 			sourceTree = "<group>";
 		};
 		94695DB517F6635E00B1E6A9 /* fmdb */ = {
@@ -234,12 +234,12 @@
 			files = (
 				94695DC017F6635E00B1E6A9 /* FMDatabase.m in Sources */,
 				94695DD217F66FEF00B1E6A9 /* State.m in Sources */,
-				94695DB417F65CBD00B1E6A9 /* MambaStore.m in Sources */,
+				94695DB417F65CBD00B1E6A9 /* DHMambaStore.m in Sources */,
 				946E38D418E8A23500C319EC /* ChildObject.m in Sources */,
 				94695DC417F6635E00B1E6A9 /* FMResultSet.m in Sources */,
 				946E38D718E8E0CB00C319EC /* SelfCodedObject.m in Sources */,
 				94695DC217F6635E00B1E6A9 /* FMDatabasePool.m in Sources */,
-				94C87CE01891FB8D00856B0E /* NSObject+MambaObject.m in Sources */,
+				94C87CE01891FB8D00856B0E /* NSObject+DHMambaObject.m in Sources */,
 				94695DCE17F66CDA00B1E6A9 /* NSObject+ValueForPath.m in Sources */,
 				94695DAC17F65C5200B1E6A9 /* MambaStoreTests.m in Sources */,
 				94695DC117F6635E00B1E6A9 /* FMDatabaseAdditions.m in Sources */,

@@ -24,33 +24,33 @@
 //  DEALINGS IN THE SOFTWARE.
 //
 
-#import "MambaStore.h"
+#import "DHMambaStore.h"
 #import "FMDatabaseQueue.h"
 
 static FMDatabaseQueue *staticStore;
 static NSMutableArray *staticCollectionList;
 static NSMutableDictionary *staticCollectionSources;
 
-@implementation MambaStore
+@implementation DHMambaStore
 
 #pragma mark - Open/Close Methods
 
 + (void)openStore {
     
-    [MambaStore openStore:@"mamba.db"];
+    [DHMambaStore openStore:@"mamba.db"];
 }
 
 + (void)openStore:(NSString *)storeName {
     
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
     NSString *fullPath = [documentsDirectory stringByAppendingPathComponent:storeName];
-    [MambaStore openStoreWithPath:fullPath];
+    [DHMambaStore openStoreWithPath:fullPath];
 }
 
 + (void)openStoreWithPath:(NSString *)storePath {
     
     if ( staticStore ) {
-        [MambaStore closeStore];
+        [DHMambaStore closeStore];
     }
     
     // NSLog(@"opening store at path: %@",storePath);
@@ -76,20 +76,20 @@ static NSMutableDictionary *staticCollectionSources;
 
 + (void)removeStore {
     
-    [MambaStore removeStore:@"mamba.db"];
+    [DHMambaStore removeStore:@"mamba.db"];
 }
 
 + (void)removeStore:(NSString *)storeName {
     
     NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
     NSString *fullPath = [documentsDirectory stringByAppendingPathComponent:storeName];
-    [MambaStore removeStoreWithPath:fullPath];
+    [DHMambaStore removeStoreWithPath:fullPath];
 }
 
 + (void)removeStoreWithPath:(NSString *)storePath {
     
     if ( staticStore ) {
-        [MambaStore closeStore];
+        [DHMambaStore closeStore];
     }
     
     NSError *error;
@@ -111,7 +111,7 @@ static NSMutableDictionary *staticCollectionSources;
 + (void)insertObject:(id)object {
     
     NSString *collection = NSStringFromClass([object class]);
-    [MambaStore createCollectionIfDoesntExist:[object class]];
+    [DHMambaStore createCollectionIfDoesntExist:[object class]];
 
     NSString *objID = [object MB_objID];
     NSString *objKey = [object MB_objKey];
@@ -140,14 +140,14 @@ static NSMutableDictionary *staticCollectionSources;
         
         // Post a notification so listeners can catch inserts
         // in other parts of the code.
-        [[NSNotificationCenter defaultCenter] postNotificationName:kMambaStoreNotification object:[object class] userInfo:@{@"operation":@"insert",@"object":objID}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kDHMambaStoreNotification object:[object class] userInfo:@{@"operation":@"insert",@"object":objID}];
     }];
 }
 
 + (void)updateObject:(id)object {
     
     NSString *collection = NSStringFromClass([object class]);
-    [MambaStore createCollectionIfDoesntExist:[object class]];
+    [DHMambaStore createCollectionIfDoesntExist:[object class]];
     
     NSString *objID = [object MB_objID];
     NSString *objKey = [object MB_objKey];
@@ -174,7 +174,7 @@ static NSMutableDictionary *staticCollectionSources;
         
         // Post a notification so listeners can catch inserts
         // in other parts of the code.
-        [[NSNotificationCenter defaultCenter] postNotificationName:kMambaStoreNotification object:[object class] userInfo:@{@"operation":@"update",@"object":objID}];
+        [[NSNotificationCenter defaultCenter] postNotificationName:kDHMambaStoreNotification object:[object class] userInfo:@{@"operation":@"update",@"object":objID}];
     }];
     
 }
@@ -182,7 +182,7 @@ static NSMutableDictionary *staticCollectionSources;
 + (void)deleteObject:(id)object {
     
     NSString *collection = NSStringFromClass([object class]);
-    [MambaStore createCollectionIfDoesntExist:[object class]];
+    [DHMambaStore createCollectionIfDoesntExist:[object class]];
     
     // If no id, then just ignore since this object hasn't been stored yet
     if ( [object MB_has_objID] ) {
@@ -197,13 +197,13 @@ static NSMutableDictionary *staticCollectionSources;
             
             // Post a notification so listeners can catch inserts
             // in other parts of the code.
-            [[NSNotificationCenter defaultCenter] postNotificationName:kMambaStoreNotification object:[object class] userInfo:@{@"operation":@"delete",@"object":objID}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:kDHMambaStoreNotification object:[object class] userInfo:@{@"operation":@"delete",@"object":objID}];
         }];
     }
 }
 
 #pragma mark - Query methods
-+ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters order:(MambaObjectOrderBy)orderBy limit:(NSUInteger)limit resultBlock:(void (^)(FMResultSet *))resultBlock {
++ (void)selectFromCollection:(NSString *)collection where:(NSString *)whereClause parameters:(NSDictionary *)parameters order:(DHMambaObjectOrderBy)orderBy limit:(NSUInteger)limit resultBlock:(void (^)(FMResultSet *))resultBlock {
     
     if ( !resultBlock ) {
         NSLog(@"Error: no result block passed in, so pointless to run the query.");
@@ -217,42 +217,42 @@ static NSMutableDictionary *staticCollectionSources;
     
     NSString *orderByString = @"";
     switch ( orderBy ) {
-    case MambaObjectOrderByKey:
+    case DHMambaObjectOrderByKey:
         orderByString = @"objKey";
         break;
-    case MambaObjectOrderByTitle:
+    case DHMambaObjectOrderByTitle:
         orderByString = @"objTitle";
         break;
-    case MambaObjectOrderByForeignKey:
+    case DHMambaObjectOrderByForeignKey:
         orderByString = @"objForeignKey";
         break;
-    case MambaObjectOrderByCreateTime:
+    case DHMambaObjectOrderByCreateTime:
         orderByString = @"createTime";
         break;
-    case MambaObjectOrderByUpdateTime:
+    case DHMambaObjectOrderByUpdateTime:
         orderByString = @"updateTime";
         break;
-    case MambaObjectOrderByOrderNumber:
+    case DHMambaObjectOrderByOrderNumber:
         orderByString = @"orderNumber";
         break;
-        case MambaObjectOrderByKeyDescending:
-            orderByString = @"objKey DESC";
-            break;
-        case MambaObjectOrderByTitleDescending:
-            orderByString = @"objTitle DESC";
-            break;
-        case MambaObjectOrderByForeignKeyDescending:
-            orderByString = @"objForeignKey DESC";
-            break;
-        case MambaObjectOrderByCreateTimeDescending:
-            orderByString = @"createTime DESC";
-            break;
-        case MambaObjectOrderByUpdateTimeDescending:
-            orderByString = @"updateTime DESC";
-            break;
-        case MambaObjectOrderByOrderNumberDescending:
-            orderByString = @"orderNumber DESC";
-            break;
+    case DHMambaObjectOrderByKeyDescending:
+        orderByString = @"objKey DESC";
+        break;
+    case DHMambaObjectOrderByTitleDescending:
+        orderByString = @"objTitle DESC";
+        break;
+    case DHMambaObjectOrderByForeignKeyDescending:
+        orderByString = @"objForeignKey DESC";
+        break;
+    case DHMambaObjectOrderByCreateTimeDescending:
+        orderByString = @"createTime DESC";
+        break;
+    case DHMambaObjectOrderByUpdateTimeDescending:
+        orderByString = @"updateTime DESC";
+        break;
+    case DHMambaObjectOrderByOrderNumberDescending:
+        orderByString = @"orderNumber DESC";
+        break;
     }
 
     querySql = [querySql stringByAppendingFormat:@" order by %@",orderByString];

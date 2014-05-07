@@ -7,9 +7,9 @@
 //
 
 #import <XCTest/XCTest.h>
-#import "MambaStore.h"
+#import "DHMambaStore.h"
 #import "State.h"
-#import "NSObject+MambaObject.h"
+#import "NSObject+DHMambaObject.h"
 #import "ParentObject.h"
 #import "ChildObject.h"
 #import "SelfCodedObject.h"
@@ -25,8 +25,8 @@
     [super setUp];
     NSLog(@"=== setUp ===");
     // Put setup code here. This method is called before the invocation of each test method in the class.
-    [MambaStore removeStore];
-    [MambaStore openStore];
+    [DHMambaStore removeStore];
+    [DHMambaStore openStore];
     [State loadTestStates];
 //    [MambaStore replaceCollection:@"State" withResource:@"States" ofType:@"json" usingClass:[State class]];
 }
@@ -34,7 +34,7 @@
 - (void)tearDown
 {
     NSLog(@"=== tearDown ===");
-    [MambaStore closeStore];
+    [DHMambaStore closeStore];
     // Put teardown code here. This method is called after the invocation of each test method in the class.
     [super tearDown];
 }
@@ -208,7 +208,7 @@
     
     dispatch_semaphore_t sema = dispatch_semaphore_create(0);
 
-    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:kMambaStoreNotification object:[State class] queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+    id observer = [[NSNotificationCenter defaultCenter] addObserverForName:kDHMambaStoreNotification object:[State class] queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
         
         NSLog(@"notification info: %@",note.userInfo);
         

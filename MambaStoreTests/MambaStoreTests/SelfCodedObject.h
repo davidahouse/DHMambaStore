@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NSObject+MambaObject.h"
+#import "NSObject+DHMambaObject.h"
 
 @interface SelfCodedObject : NSObject<NSCoding>
 
