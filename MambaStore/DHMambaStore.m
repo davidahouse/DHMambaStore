@@ -110,7 +110,7 @@ static NSMutableDictionary *staticCollectionSources;
 
 + (void)insertObject:(id)object {
     
-    NSString *collection = NSStringFromClass([object class]);
+    NSString *collection = [NSStringFromClass([object class]) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     [DHMambaStore createCollectionIfDoesntExist:[object class]];
 
     NSString *objID = [object MB_objID];
@@ -146,7 +146,7 @@ static NSMutableDictionary *staticCollectionSources;
 
 + (void)updateObject:(id)object {
     
-    NSString *collection = NSStringFromClass([object class]);
+    NSString *collection = [NSStringFromClass([object class]) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     [DHMambaStore createCollectionIfDoesntExist:[object class]];
     
     NSString *objID = [object MB_objID];
@@ -181,7 +181,7 @@ static NSMutableDictionary *staticCollectionSources;
 
 + (void)deleteObject:(id)object {
     
-    NSString *collection = NSStringFromClass([object class]);
+    NSString *collection = [NSStringFromClass([object class]) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     [DHMambaStore createCollectionIfDoesntExist:[object class]];
     
     // If no id, then just ignore since this object hasn't been stored yet
@@ -295,7 +295,7 @@ static NSMutableDictionary *staticCollectionSources;
 #pragma mark - Private Methods
 + (void)createCollectionIfDoesntExist:(Class)docClass{
     
-    NSString *collection = NSStringFromClass(docClass);
+    NSString *collection = [NSStringFromClass(docClass) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     
     // Check for the static array that lists all the collections
     if ( !staticCollectionList ) {

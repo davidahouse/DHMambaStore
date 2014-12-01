@@ -199,7 +199,7 @@ static char const * const DHMambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 
 - (void)MB_deleteAll {
     
-    NSString *collection = NSStringFromClass([self class]);
+    NSString *collection = [NSStringFromClass([self class]) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     [DHMambaStore emptyCollection:collection];
 }
 
@@ -207,7 +207,7 @@ static char const * const DHMambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 + (id)MB_loadWithID:(NSString *)objectID
 {
     // get the default collection name
-    NSString *collection = NSStringFromClass([self class]);
+    NSString *collection = [NSStringFromClass([self class]) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     
     __block id resultObject = nil;
     [DHMambaStore selectFromCollection:collection where:@"objID = :objID" parameters:@{@"objID":objectID} order:DHMambaObjectOrderByOrderNumber limit:0 resultBlock:^(FMResultSet *results) {
@@ -221,7 +221,7 @@ static char const * const DHMambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 + (id)MB_findWithKey:(NSString *)key {
     
     // get the default collection name
-    NSString *collection = NSStringFromClass([self class]);
+    NSString *collection = [NSStringFromClass([self class]) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     
     __block id resultObject = nil;
     [DHMambaStore selectFromCollection:collection where:@"objKey = :objKey" parameters:@{@"objKey":key} order:DHMambaObjectOrderByOrderNumber limit:0 resultBlock:^(FMResultSet *results) {
@@ -572,7 +572,7 @@ static char const * const DHMambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 
 + (NSArray *)MB_search:(NSArray *)criteria parameters:(NSDictionary *)parameters limit:(NSUInteger)limit orderBy:(DHMambaObjectOrderBy)orderBy {
     
-    NSString *collection = NSStringFromClass([self class]);
+    NSString *collection = [NSStringFromClass([self class]) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     
     // setup the where clause
     NSString *where = @"";
@@ -595,7 +595,7 @@ static char const * const DHMambaObjectUpdateTimeKey = "MambaObjectUpdateTime";
 
 + (NSNumber *)MB_count:(NSString *)criteria parameters:(NSDictionary *)parameters {
     
-    NSString *collection = NSStringFromClass([self class]);
+    NSString *collection = [NSStringFromClass([self class]) stringByReplacingOccurrencesOfString:@"." withString:@"_"];
     return [DHMambaStore countFromCollection:collection where:criteria parameters:parameters];
 }
 
